@@ -1,10 +1,12 @@
-import { HttpClient }             from '@angular/common/http';
+import { HTTP }                   from '@ionic-native/http';
 import { Injectable }             from '@angular/core';
 import { File, FileEntry }        from '@ionic-native/file';
 import { Platform }               from 'ionic-angular';
 import { fromEvent }              from 'rxjs/observable/fromEvent';
 import { first }                   from 'rxjs/operators';
 import { ImageLoaderConfig }       from './image-loader-config';
+
+declare var cordova;
 
 interface IndexItem {
   name: string;
@@ -56,8 +58,8 @@ export class ImageLoader {
   constructor(
     private config: ImageLoaderConfig,
     private file: File,
-    private http: HttpClient,
     private platform: Platform,
+    private http: HTTP,
   ) {
     if (!platform.is('cordova')) {
       // we are running on a browser, or using livereload
@@ -328,36 +330,24 @@ export class ImageLoader {
         const localDir = this.getFileCacheDirectory() + this.config.cacheDirectoryName + '/';
         const fileName = this.createFileName(currentItem.imageUrl);
 
-        this.http.get(currentItem.imageUrl, {
-          responseType: 'blob',
-          headers: this.config.httpHeaders
-        }).subscribe(
-          (data: Blob) => {
-            this.file.writeFile(localDir, fileName, data, {replace: true}).then((file: FileEntry) => {
-              if (this.isCacheSpaceExceeded) {
-                this.maintainCacheSize();
-              }
-              this.addFileToIndex(file).then(() => {
-                this.getCachedImagePath(currentItem.imageUrl).then((localUrl) => {
-                  currentItem.resolve(localUrl);
-                  resolve();
-                  done();
-                  this.maintainCacheSize();
-                });
-              });
-            }).catch((e) => {
-              // Could not write image
-              error(e);
-              reject(e);
-            });
-          },
-          (e) => {
-            // Could not get image via httpClient
-            error(e);
-            reject(e);
-          });
-        }
-      ).catch((e) => this.throwError(e));
+        this.http.downloadFile(currentItem.imageUrl, {}, this.config.httpHeaders, localDir + fileName).then((file: FileEntry) => { 
+          if (this.isCacheSpaceExceeded) { 
+            this.maintainCacheSize(); 
+          } 
+          this.addFileToIndex(file).then(() => { 
+            this.getCachedImagePath(currentItem.imageUrl).then((localUrl) => { 
+              currentItem.resolve(localUrl); 
+              resolve(); 
+              done(); 
+              this.maintainCacheSize(); 
+            }); 
+          }); 
+        }).catch((e) => { 
+          //Could not get image via httpClient 
+          error(e); 
+          reject(e);
+        });
+      }).catch((e) => this.throwError(e));
     } else {
       // Prevented same Image from loading at the same time
       this.currentlyProcessing[currentItem.imageUrl].then(() => {

@@ -1,6 +1,6 @@
 {
   "name": "ionic-image-loader",
-  "version": "6.3.3",
+  "version": "6.4.3",
   "description": "Ionic Component and Service to load images in a background thread and cache them for later use",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -41,6 +41,7 @@
     "@angular/platform-browser-dynamic": "5.2.11",
     "@ionic-native/core": "4.13.0",
     "@ionic-native/file": "4.13.0",
+    "@ionic-native/http": "^4.20.0",
     "codelyzer": "^4.4.2",
     "conventional-changelog-cli": "^2.0.1",
     "ionic-angular": "^3.9.2",
@@ -51,6 +52,7 @@
     "zone.js": "0.8.26"
   },
   "peerDependencies": {
-    "@ionic-native/file": "^4.0.0"
+    "@ionic-native/file": "^4.0.0",
+    "@ionic-native/http": "^4.20.0"
   }
 }

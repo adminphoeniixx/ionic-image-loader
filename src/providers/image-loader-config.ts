@@ -1,4 +1,3 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Injectable }  from '@angular/core';
 
 @Injectable()
@@ -35,7 +34,7 @@ export class ImageLoaderConfig {
 
   spinnerColor;
 
-  httpHeaders: HttpHeaders;
+  httpHeaders: object;
 
   fileNameCachedWithExtension = false;
 
@@ -192,10 +191,10 @@ export class ImageLoaderConfig {
   }
 
   /**
-   * Set headers options for the HttpClient transfers.
-   * @param {HttpHeaders} headers
+   * Set headers options for the HTTP transfers.
+   * @param {object} headers
    */
-  setHttpHeaders(headers: HttpHeaders): void {
+  setHttpHeaders(headers: object): void {
     this.httpHeaders = headers;
   }
 
